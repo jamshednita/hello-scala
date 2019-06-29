@@ -187,5 +187,17 @@ object Chapter3 extends App {
   applyDiscount("COUPON_1234")
   applyDiscount(10)
 
+  println("\nHow to define a generic typed function which will specify types of its parameter")
+  def applyDiscount[T](discount:T)={
+    discount match {
+      case d:String => println(s"Lookup percentage discount in database for $d")
+      case d:Double => println(s"$d discout will be applied")
+      case _ => println("Unsupported discount type")
+    }
+  }
+  println("\nStep 5: How to call a function which has typed parameters")
+  applyDiscount[String]("COUPON_123")
+  applyDiscount[Double](10)
+
 
 }
