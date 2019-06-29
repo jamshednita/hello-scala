@@ -1,2 +1,2 @@
-# hello-scala
+# helloscala
 say hello to Scala world !
