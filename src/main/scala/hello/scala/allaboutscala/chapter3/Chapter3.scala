@@ -1,5 +1,7 @@
 package hello.scala.allaboutscala.chapter3
 
+import hello.scala.allaboutscala.chapter3.Chapter3.totalCost
+
 object Chapter3 extends App {
   // ============ Create And Use Functions ============
   println("Step 1: How to define and use a function which has no parameters and has a return type")
@@ -198,6 +200,88 @@ object Chapter3 extends App {
   println("\nStep 5: How to call a function which has typed parameters")
   applyDiscount[String]("COUPON_123")
   applyDiscount[Double](10)
+
+
+  // ============ Create Typed Function ============
+  println("\nStep 3: How to define a generic typed function which also has a generic return type")
+  def applyDiscountWithReturnType[T](discount: T):Seq[T] = {
+    discount match {
+      case d: String =>
+        println(s"Lookup percentage discount in database for $d")
+        Seq[T](discount)
+      case d: Double =>
+        println(s"$d discout will be applied")
+        Seq[T](discount)
+      case d @ _ =>
+        println("Unsupported discount type")
+        Seq[T](discount)
+    }
+  }
+  println("\nStep 4: How to call a generic typed function which also has a generic return type")
+  println(s"Result of applyDiscountWithReturnType with String parameter = ${applyDiscountWithReturnType[String]("COUPON_123")}")
+  println(s"Result of applyDiscountWithReturnType with Double parameter = ${applyDiscountWithReturnType[Double](10.5)}")
+  println(s"Result of applyDiscountWithReturnType with Char parameter = ${applyDiscountWithReturnType[Char]('U')}")
+
+
+  // ============ Create Typed Function ============
+  def printReport(names: String*) {
+    println(s"""Donut Report = ${names.mkString(" - ")}""")
+  }
+
+  println("\nStep 2: How to call function which takes variable number of String arguments")
+  //printReport("Glazed Donut", "Strawberry Donut", "Vanilla Donut")
+  //printReport("Chocolate Donut")
+  //printReport()
+
+  println("\nStep 3: How to pass a List to a function with variable number of arguments")
+  val listDonuts: List[String] = List("Glazed Donut", "Strawberry Donut", "Vanilla Donut")
+  printReport(listDonuts:_*) // To make varargs accept List,Seq,Array. We need to use type ascription. i.e varNames: _*
+  println("\nStep 4: How to pass a Sequence to a function with variable number of arguments")
+  val seqDonuts: Seq[String] = Seq("Chocolate Donut", "Plain Donut")
+  printReport(seqDonuts:_*)
+  println("\nStep 5: How to pass an Array to a function with variable number of arguments")
+  val arrDonuts: Array[String] = Array("Coconut Donut")
+  printReport(arrDonuts:_*)
+
+  // ============ Create Functions As Symbols ============
+  println("\nStep 3: How to define function whose name is just the symbol minus -")
+  class DonutCostCalculator {
+
+    // We are hard-coding the totalCost value for simplicity.
+    val totalCost = 100
+    def -(discount: Double): Double = {
+      totalCost - discount
+    }
+
+    def +++(taxAmount: Double): Double = {
+      totalCost + taxAmount
+    }
+  }
+  val donutCostCalculator = new DonutCostCalculator()
+  println("\nStep 4: How to call function whose name is just the symbol -")
+  println(s"Calling function - = ${donutCostCalculator.-(10.5)}")
+
+  println("\nStep 5: How to call a function using the operator style notation")
+  println(s"Calling function - with operator style notation = ${donutCostCalculator - 10.5}")
+
+
+  // ============ Create Function Currying With Parameter Groups ============
+  println("\nStep 1: How to define function with curried parameter groups")
+  def totalCostWithCurrying(donutType: String)(quantity: Int)(discount: Double): Double = {
+    println(s"Calculating total cost for $quantity $donutType with ${discount * 100}% discount")
+    val totalCost = 2.50 * quantity
+    totalCost - (totalCost * discount)
+  }
+  println("\nStep 2: How to call a function with curried parameter groups")
+  println(s"Total cost = ${totalCostWithCurrying("Glazed Donut")(10)(0.1)}")
+
+  println("\nStep 3: How to create a partially applied function from a function with curried parameter groups")
+  val totalCostForGlazedDonuts = totalCostWithCurrying("Glazed Donuts") _
+
+  println("\nStep 4: How to call a partially applied function")
+  println(s"\n Total cost for glazed donuts = ${totalCostForGlazedDonuts(10)(0.1)}")
+
+
 
 
 }
